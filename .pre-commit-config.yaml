@@ -1,0 +1,47 @@
+---
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black-jupyter
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        args:
+          - '--skip=*.ipynb'
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        args:
+          - --max-line-length=120 # PyCharm
+          - --ignore=E731,W503,E203
+          - --show-source
+          - --statistics
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: [ "--profile", "black" ]
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        args:
+          - --source
+          - --explain
+          - --ignore=D403,D107,D203,D212,D213,D402,D413,D415,D416,D417
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-black
+        args:
+          - --wrap=80
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
