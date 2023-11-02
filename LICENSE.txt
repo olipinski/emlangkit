@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2021 Anonymous Author(s)
+Copyright (c) 2021 Łukasz Kuciński, Tomasz Korbak, Paweł Kołodziej, Piotr Miłoś
 Copyright (c) Facebook, Inc. and its affiliates.
 Copyright (c) 2023 Ryo Ueda
 Copyright (c) 2023 Olaf Lipinski

@@ -1,3 +1,4 @@
+"""Calculate topographic similarity for a given language."""
 from typing import Tuple
 
 import editdistance
@@ -10,18 +11,18 @@ def compute_topographic_similarity(
     messages: np.ndarray, observations: np.ndarray
 ) -> Tuple[float, float]:
     """
-    Calculate the topographic similarity between the given messages and meanings.
+    Calculate the topographic similarity between the given messages and observations.
 
     Parameters
     ----------
-    messages: np.ndarray
+    messages : np.ndarray
         Messages to calculate the topographic similarity for.
-    observations: np.ndarray
-        Meanings to calculate the topographic similarity for.
+    observations : np.ndarray
+        Observations to calculate the topographic similarity for.
 
     Returns
     -------
-    topsim_value: np.ndarray
+    topsim_value : np.ndarray
         Topographic similarity score.
     """
     observations_dist = distance.pdist(observations, "hamming")

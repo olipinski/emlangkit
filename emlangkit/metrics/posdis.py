@@ -3,7 +3,6 @@ Functions for Positional/BagOfWords Disentanglement.
 
 Adapted from https://proceedings.neurips.cc/paper/2021/hash/c2839bed26321da8b466c80a032e4714-Abstract.html
 """
-from typing import Union
 
 import numpy as np
 
@@ -17,14 +16,14 @@ def compute_posdis(messages: np.ndarray, observations: np.ndarray) -> float:
 
     Parameters
     ----------
-    messages: Union[list, np.ndarray]
-        Messages to calculate the compute_posdis for.
-    observations: Union[list, np.ndarray]
-        Meanings to calculate the compute_posdis for.
+    messages : np.ndarray
+        Messages to calculate positional disentanglement for.
+    observations : np.ndarray
+        Observations to calculate positional disentanglement for.
 
     Returns
     -------
-    posdis: float
+    posdis : float
         Positional disentanglement score.
     """
     disentanglement_scores = []
@@ -35,7 +34,7 @@ def compute_posdis(messages: np.ndarray, observations: np.ndarray) -> float:
         symbol_mutual_info = []
         symbol_entropy = compute_entropy(np.array(symbols_j))
         for i in range(len(observations[0])):
-            concepts_i = [meaning[i] for meaning in observations]
+            concepts_i = [observation[i] for observation in observations]
             mutual_info = compute_mutual_information(
                 np.array([concepts_i]).T, np.array([symbols_j]).T
             )

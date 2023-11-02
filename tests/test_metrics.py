@@ -50,6 +50,11 @@ def test_entropy():
         2.0,
         5,
     )
+    np.testing.assert_almost_equal(
+        metrics.compute_entropy(np.array([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144])),
+        3.41,
+        2,
+    )
 
 
 def test_topsim():

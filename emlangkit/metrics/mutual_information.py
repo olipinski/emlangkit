@@ -20,16 +20,16 @@ def compute_mutual_information(
 
     Parameters
     ----------
-    messages: np.ndarray
+    messages : np.ndarray
         Messages to calculate the mutual information for.
-    observations: np.ndarray
-        Meanings to calculate the mutual information for.
-    entropies: Tuple[np.ndarray, np.ndarray]
-        Optional pre-calculated entropies for messages and observations.
+    observations : np.ndarray
+        Observations to calculate the mutual information for.
+    entropies : Tuple[np.ndarray, np.ndarray], optional
+        Pre-calculated entropies for messages and observations.
 
     Returns
     -------
-    mi: np.ndarray
+    mi : np.ndarray
         Mutual information score.
     """
     if not entropies:
@@ -38,8 +38,10 @@ def compute_mutual_information(
     else:
         message_entropy = entropies[0]
         observations_entropy = entropies[1]
-    messages_and_meanings = np.concatenate(
+    messages_and_observations = np.concatenate(
         (np.array(observations), np.array(messages)), axis=1
     )
-    messages_and_meanings_joint_entropy = compute_entropy(messages_and_meanings)
-    return observations_entropy + message_entropy - messages_and_meanings_joint_entropy
+    messages_and_observations_joint_entropy = compute_entropy(messages_and_observations)
+    return (
+        observations_entropy + message_entropy - messages_and_observations_joint_entropy
+    )
