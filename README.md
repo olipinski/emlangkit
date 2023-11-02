@@ -3,8 +3,9 @@
 
 # Emergent Language Analysis Toolkit
 
-This toolkit aims to collect all metrics currently used in emergent communication research into one place. 
-The usage should be convenient and the inputs should be standardised, to ease adoption and spread of these metrics.
+This toolkit aims to collect all metrics currently used in emergent
+communication research into one place. The usage should be convenient and the
+inputs should be standardised, to ease adoption and spread of these metrics.
 
 ## Installation
 
