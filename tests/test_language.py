@@ -46,7 +46,7 @@ def test_metrics():
     lang = Language(messages=test_msgs, observations=test_obs)
     lang_no_obs = Language(messages=test_msgs)
 
-    # Test no observation langauge
+    # Test no observation language
     with pytest.raises(ValueError):
         lang_no_obs.topsim()
     with pytest.raises(ValueError):
@@ -60,7 +60,7 @@ def test_metrics():
 
     lang_no_obs.language_entropy()
 
-    # Test langauge with observations provided
+    # Test language with observations provided
 
     lang.topsim()
     lang.mutual_information()
