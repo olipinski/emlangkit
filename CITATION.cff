@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: emlangkit
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: Olaf
+    family-names: Lipinski
+    email: o.lipinski@soton.ac.uk
+    affiliation: University of Southampton
+    orcid: 'https://orcid.org/0000-0002-2023-7617'
+url: 'https://github.com/olipinski/emlangkit'
+keywords:
+  - artificial intelligence
+  - reinforcement learning
+  - emergent communication
+license: MIT
+version: 0.0.1
