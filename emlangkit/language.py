@@ -17,28 +17,32 @@ class Language:
     def __init__(
         self,
         messages: np.ndarray,
-        observations: Optional[np.ndarray],
+        observations: Optional[np.ndarray] = None,
     ):
-        if len(messages) == 0 or len(messages[0]) == 0:
+        if not isinstance(messages, np.ndarray):
+            raise ValueError("Language only accepts numpy arrays!")
+
+        if np.size(messages) == 0:
             raise ValueError("Empty messages passed!")
 
         if observations is not None:
-            if len(observations) == 0 or len(observations[0]) == 0:
-                raise ValueError("Empty messages passed!")
+            if not isinstance(observations, np.ndarray):
+                raise ValueError("Language only accepts numpy arrays!")
+            if np.size(observations) == 0:
+                raise ValueError("Empty observations passed!")
 
         self.messages = messages
         self.observations = observations
 
         # Placeholders
-        self.topsim_value = None
-        self.posdis_value = None
-        self.bosdis_value = None
-        self.langauge_entropy_value = None
-        self.observation_entropy_value = None
-        self.mutual_information_value = None
-        self.has = None
+        self.__topsim_value = None
+        self.__posdis_value = None
+        self.__bosdis_value = None
+        self.__langauge_entropy_value = None
+        self.__observation_entropy_value = None
+        self.__mutual_information_value = None
 
-    def topsim(self):
+    def topsim(self) -> tuple[float, float]:
         """
         Calculate the topographic similarity score for the language.
 
@@ -46,23 +50,23 @@ class Language:
 
         Returns
         -------
-            float: The positional disentanglement value.
+            tuple of floats: The topographic similarity value, and the p-value.
 
         Raises
         ------
             ValueError: If observations are not set.
         """
-        if not self.observations:
+        if self.observations is None:
             raise ValueError(
                 "Observations are needed to calculate topographic similarity."
             )
 
-        if not self.topsim_value:
-            self.topsim_value = metrics.compute_topographic_similarity(
+        if self.__topsim_value is None:
+            self.__topsim_value = metrics.compute_topographic_similarity(
                 self.messages, self.observations
             )
 
-        return self.topsim_value
+        return self.__topsim_value
 
     def posdis(self):
         """
@@ -78,14 +82,16 @@ class Language:
         ------
             ValueError: If observations are not set.
         """
-        if not self.observations:
+        if self.observations is None:
             raise ValueError(
                 "Observations are needed to calculate positional disentanglement!"
             )
-        if not self.posdis_value:
-            self.posdis_value = metrics.compute_posdis(self.messages, self.observations)
+        if self.__posdis_value is None:
+            self.__posdis_value = metrics.compute_posdis(
+                self.messages, self.observations
+            )
 
-        return self.posdis_value
+        return self.__posdis_value
 
     def bosdis(self):
         """
@@ -101,14 +107,16 @@ class Language:
         ------
             ValueError: If observations are not set.
         """
-        if not self.observations:
+        if self.observations is None:
             raise ValueError(
                 "Observations are needed to calculate bag-of-words disentanglement!"
             )
-        if not self.bosdis_value:
-            self.bosdis_value = metrics.compute_bosdis(self.messages, self.observations)
+        if self.__bosdis_value is None:
+            self.__bosdis_value = metrics.compute_bosdis(
+                self.messages, self.observations
+            )
 
-        return self.bosdis_value
+        return self.__bosdis_value
 
     def language_entropy(self):
         """
@@ -125,10 +133,10 @@ class Language:
             ValueError: If observations are not set.
         """
         # This may have been calculated previously
-        if not self.langauge_entropy_value:
-            self.langauge_entropy_value = metrics.compute_entropy(self.messages)
+        if self.__langauge_entropy_value is None:
+            self.__langauge_entropy_value = metrics.compute_entropy(self.messages)
 
-        return self.langauge_entropy_value
+        return self.__langauge_entropy_value
 
     def observation_entropy(self):
         """
@@ -144,15 +152,17 @@ class Language:
         ------
             ValueError: If observations are not set.
         """
-        if not self.observations:
+        if self.observations is None:
             raise ValueError(
                 "Observations are needed to calculate observation entropy!"
             )
         # This may have been calculated previously
-        if not self.observation_entropy_value:
-            self.observation_entropy_value = metrics.compute_entropy(self.observations)
+        if self.__observation_entropy_value is None:
+            self.__observation_entropy_value = metrics.compute_entropy(
+                self.observations
+            )
 
-        return self.observation_entropy_value
+        return self.__observation_entropy_value
 
     def mutual_information(self):
         """
@@ -168,19 +178,19 @@ class Language:
         ------
             ValueError: If observations are not set.
         """
-        if not self.observations:
+        if self.observations is None:
             raise ValueError("Observations are needed to calculate mutual information!")
 
-        if not self.observation_entropy_value:
+        if self.__observation_entropy_value is None:
             self.observation_entropy()
-        if not self.langauge_entropy_value:
+        if self.__langauge_entropy_value is None:
             self.language_entropy()
 
-        if not self.mutual_information_value:
-            self.mutual_information_value = metrics.compute_mutual_information(
+        if self.__mutual_information_value is None:
+            self.__mutual_information_value = metrics.compute_mutual_information(
                 self.messages,
                 self.observations,
-                (self.langauge_entropy_value, self.observation_entropy_value),
+                (self.__langauge_entropy_value, self.__observation_entropy_value),
             )
 
-        return self.mutual_information_value
+        return self.__mutual_information_value

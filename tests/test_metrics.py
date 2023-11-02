@@ -294,6 +294,40 @@ def test_mi():
         2,
     )
 
+    # Test inputting the pre-computed entropies
+    np.testing.assert_almost_equal(
+        metrics.compute_mutual_information(
+            messages=np.array(
+                [
+                    [1, 2],
+                    [3, 4],
+                ]
+            ),
+            observations=np.array(
+                [
+                    [1, 2],
+                    [3, 4],
+                ]
+            ),
+            entropies=(np.array([1.0]), np.array([1.0])),
+        ),
+        metrics.compute_mutual_information(
+            messages=np.array(
+                [
+                    [1, 2],
+                    [3, 4],
+                ]
+            ),
+            observations=np.array(
+                [
+                    [1, 2],
+                    [3, 4],
+                ]
+            ),
+        ),
+        5,
+    )
+
 
 def test_posdis():
     """Tests to see if positional disentanglement is calculated correctly."""
