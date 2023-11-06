@@ -69,6 +69,7 @@ class Language:
         # M_previous^n placeholders
         self.__mpn_value = None
         self.prev_horizon = prev_horizon
+
     def topsim(self) -> tuple[float, float]:
         """
         Calculate the topographic similarity score for the language.
