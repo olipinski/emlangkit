@@ -44,11 +44,12 @@ lang_entropy = lang.language_entropy()
 
 Currently available metrics, with their implementations as per below.
 
-- Entropy (`emlangkit.metrics.entropy`)
-- Mutual Information (`emlangkit.metrics.mutual_information`)
-- Topographic Similarity (`emlangkit.metrics.topsim`)
-- Positional Disentanglement (`emlangkit.metrics.posdis`)
-- Bag-of-Words Disentanglement (`emlangkit.metrics.bosdis`)
+- Entropy \[1,2\] (`emlangkit.metrics.entropy`)
+- Mutual Information \[1,2\] (`emlangkit.metrics.mutual_information`)
+- Topographic Similarity \[1,2,3\] (`emlangkit.metrics.topsim`)
+- Positional Disentanglement \[2,4\] (`emlangkit.metrics.posdis`)
+- Bag-of-Words Disentanglement \[2,4\] (`emlangkit.metrics.bosdis`)
+- M_previous^n \[5\] (`emlangkit.metrics.mpn`)
 
 ## Contributing
 
@@ -66,14 +67,6 @@ free to open a PR to add to it!
 - CGI -
   https://github.com/wedddy0707/categorial_grammar_induction_of_emergent_language
 
-## Sources
-
-Most of the base metrics are inspired or taken from either
-[EGG](https://github.com/facebookresearch/EGG), or code from the paper
-"Catalytic Role Of Noise And Necessity Of Inductive Biases In The Emergence Of
-Compositional Communication"
-[here](https://proceedings.neurips.cc/paper/2021/hash/c2839bed26321da8b466c80a032e4714-Abstract.html).
-
 ## Citation
 
 If you find emlangkit useful in your work, please cite it as below:
@@ -86,3 +79,28 @@ If you find emlangkit useful in your work, please cite it as below:
         year = {2023}
 }
 ```
+
+## Sources
+
+Most of the base metrics are inspired or taken from either
+[EGG](https://github.com/facebookresearch/EGG), or code from the paper
+"Catalytic Role Of Noise And Necessity Of Inductive Biases In The Emergence Of
+Compositional Communication"
+[here](https://proceedings.neurips.cc/paper/2021/hash/c2839bed26321da8b466c80a032e4714-Abstract.html).
+
+Citations for the metrics and parts of this software:
+
+- \[1\] L. Kucinski, T. Korbak, P. Kolodziej, and P. Milos, ‘Catalytic Role Of
+  Noise And Necessity Of Inductive Biases In The Emergence Of Compositional
+  Communication’, NeurIPS 2021
+- \[2\] E. Kharitonov, R. Chaabouni, D. Bouchacourt, and M. Baroni, ‘EGG: a
+  toolkit for research on Emergence of lanGuage in Games’, EMNLP-IJCNLP 2019
+- \[3\] H. Brighton and S. Kirby, ‘Understanding Linguistic Evolution by
+  Visualizing the Emergence of Topographic Mappings’, Artificial Life, vol. 12,
+  no. 2, pp. 229–242, Apr. 2006
+- \[4\] R. Chaabouni, E. Kharitonov, D. Bouchacourt, E. Dupoux, and M. Baroni,
+  ‘Compositionality and Generalization In Emergent Languages’, ACL 2020
+- \[5\] O. Lipinski, A. J. Sobey, F. Cerutti, and T. J. Norman, ‘On Temporal
+  References in Emergent Communication’. arXiv.2310.06555
+- \[6\] R. Ueda, T. Ishii, and Y. Miyao, ‘On the Word Boundaries of Emergent
+  Languages Based on Harris’s Articulation Scheme’, ICLR 2023
