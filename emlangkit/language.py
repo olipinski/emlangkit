@@ -12,12 +12,34 @@ class Language:
 
     It takes the messages and observations for an emergent language, and
     allows calculations of the most commonly used metrics.
+
+    Parameters
+    ----------
+    messages : numpy.ndarray
+        Numpy array containing the messages.
+    observations : numpy.ndarray, optional
+        Numpy array containing the observations. Default is None.
+    seed : int, optional
+        Seed value for random number generation. Default is 42.
+
+    Examples
+    --------
+    Create a Language object with messages and observations:
+    >>> messages = np.array([1, 2, 3, 4, 5])
+    >>> observations = np.array([6, 7, 8, 9, 10])
+    >>> lang = Language(messages, observations)
+
+    Create a Language object with only messages and default seed:
+    >>> messages = np.array([1, 2, 3, 4, 5])
+    >>> lang = Language(messages)
     """
 
     def __init__(
         self,
         messages: np.ndarray,
         observations: Optional[np.ndarray] = None,
+        prev_horizon: int = 8,
+        seed: int = 42,
     ):
         if not isinstance(messages, np.ndarray):
             raise ValueError("Language only accepts numpy arrays!")
@@ -34,6 +56,8 @@ class Language:
         self.messages = messages
         self.observations = observations
 
+        self.__rng = np.random.default_rng(seed=seed)
+
         # Placeholders
         self.__topsim_value = None
         self.__posdis_value = None
@@ -42,6 +66,9 @@ class Language:
         self.__observation_entropy_value = None
         self.__mutual_information_value = None
 
+        # M_previous^n placeholders
+        self.__mpn_value = None
+        self.prev_horizon = prev_horizon
     def topsim(self) -> tuple[float, float]:
         """
         Calculate the topographic similarity score for the language.
@@ -194,3 +221,29 @@ class Language:
             )
 
         return self.__mutual_information_value
+
+    # M_previous_n metric
+
+    def mpn(self):
+        """
+        Calculate the M_previous^n score for the language.
+
+        This method requires observations to be set in the class.
+
+        Returns
+        -------
+            float: The highest M_previous^n value.
+
+        Raises
+        ------
+            ValueError: If observations are not set.
+        """
+        if self.observations is None:
+            raise ValueError("Observations are needed to calculate M_previous^n.")
+
+        if self.__mpn_value is None:
+            self.__mpn_value = metrics.compute_mpn(
+                self.messages, self.observations, self.prev_horizon
+            )
+
+        return self.__mpn_value
