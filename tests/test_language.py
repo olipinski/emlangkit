@@ -86,11 +86,10 @@ def test_language_metrics():
     lang.conditional_entropy()
     lang.boundaries(return_count=True, return_mean=True)
     lang.random_boundaries(return_count=True, return_mean=True)
-    lang.segments(return_ids=True,return_hashed_segments=True)
+    lang.segments(return_ids=True, return_hashed_segments=True)
     lang.random_segments(return_ids=True, return_hashed_segments=True)
     lang.has_stats(compute_topsim=True)
 
     # Test recomputing random stats
     lang.random_boundaries(recompute=True)
     lang.random_segments(recompute=True)
-

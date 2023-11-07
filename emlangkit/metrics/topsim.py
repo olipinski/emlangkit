@@ -1,5 +1,5 @@
 """Calculate topographic similarity for a given language."""
-from typing import Tuple, Literal
+from typing import Literal, Tuple
 
 import editdistance
 import numpy as np
@@ -8,7 +8,10 @@ from scipy.stats import spearmanr
 
 
 def compute_topographic_similarity(
-    messages: np.ndarray, observations: np.ndarray, observations_dist_metric: str = "hamming", message_dist_metric: str = "editdistance"
+    messages: np.ndarray,
+    observations: np.ndarray,
+    observations_dist_metric: str = "hamming",
+    message_dist_metric: str = "editdistance",
 ) -> Tuple[float, float]:
     """
     Calculate the topographic similarity between the given messages and observations.

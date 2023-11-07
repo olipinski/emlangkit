@@ -305,7 +305,12 @@ class Language:
 
         return self.__boundaries
 
-    def random_boundaries(self, return_count: bool = False, return_mean: bool = False, recompute: bool = False):
+    def random_boundaries(
+        self,
+        return_count: bool = False,
+        return_mean: bool = False,
+        recompute: bool = False,
+    ):
         if self.__random_boundaries is None and not recompute:
             if self.__boundaries is None:
                 self.boundaries()
@@ -345,7 +350,12 @@ class Language:
 
         return self.__segments
 
-    def random_segments(self, return_ids: bool = False, return_hashed_segments: bool = False, recompute: bool = False):
+    def random_segments(
+        self,
+        return_ids: bool = False,
+        return_hashed_segments: bool = False,
+        recompute: bool = False,
+    ):
         if self.__random_segments is None and not recompute:
             if self.__random_boundaries is None and not recompute:
                 self.random_boundaries()
@@ -362,7 +372,11 @@ class Language:
             return self.__random_segments, self.__random_hashed_segments
 
         if return_ids and return_hashed_segments:
-            return self.__random_segments, self.__random_segment_ids, self.__random_hashed_segments
+            return (
+                self.__random_segments,
+                self.__random_segment_ids,
+                self.__random_hashed_segments,
+            )
 
         return self.__random_segments
 
@@ -381,7 +395,9 @@ class Language:
             # and has no effect on the distance measurement
             if compute_topsim:
                 padded_hashed_segments = utils.pad_jagged(self.__hashed_segments)
-                padded_random_hashed_segments = utils.pad_jagged(self.__random_hashed_segments)
+                padded_random_hashed_segments = utils.pad_jagged(
+                    self.__random_hashed_segments
+                )
 
             self.__has_stats = {
                 "vocab_size": len(self.__segment_ids),
@@ -390,7 +406,9 @@ class Language:
                 # We use hamming here, as the segments could contain multiple characters
                 # So editdistance would give us a worse estimate
                 "topographic_similarity": metrics.compute_topographic_similarity(
-                    padded_hashed_segments, self.observations, message_dist_metric="hamming"
+                    padded_hashed_segments,
+                    self.observations,
+                    message_dist_metric="hamming",
                 )
                 if compute_topsim
                 else None,
@@ -398,7 +416,9 @@ class Language:
                 "random_zla": random_zla,
                 "random_zipf": random_freq,
                 "random_topographic_similarity": metrics.compute_topographic_similarity(
-                    padded_random_hashed_segments, self.observations, message_dist_metric="hamming"
+                    padded_random_hashed_segments,
+                    self.observations,
+                    message_dist_metric="hamming",
                 )
                 if compute_topsim
                 else None,

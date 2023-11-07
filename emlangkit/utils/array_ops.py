@@ -3,6 +3,7 @@
 
 import numpy as np
 
+
 def pad_jagged(array: np.ndarray, fill: int = 0) -> np.ndarray:
     """
     Append the minimal required amount of a given integer at the end of each array, such that it looses its jagedness.
@@ -21,7 +22,7 @@ def pad_jagged(array: np.ndarray, fill: int = 0) -> np.ndarray:
 
     """
     maxlen = max(len(r) for r in array)
-    padded = np.full((len(array), maxlen),fill_value=fill)
+    padded = np.full((len(array), maxlen), fill_value=fill)
     for enu, row in enumerate(array):
-        padded[enu, :len(row)] += row
+        padded[enu, : len(row)] += row
     return padded
