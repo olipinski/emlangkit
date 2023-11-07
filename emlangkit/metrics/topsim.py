@@ -1,5 +1,5 @@
 """Calculate topographic similarity for a given language."""
-from typing import Literal, Tuple
+from typing import Tuple
 
 import editdistance
 import numpy as np
@@ -33,7 +33,10 @@ def compute_topographic_similarity(
         Topographic similarity score.
     """
     if message_dist_metric == "editdistance":
-        msg_metric = lambda x, y: editdistance.eval(x, y) / ((len(x) + len(y)) / 2)
+
+        def msg_metric(x, y):
+            return editdistance.eval(x, y) / ((len(x) + len(y)) / 2)
+
     else:
         msg_metric = message_dist_metric
 

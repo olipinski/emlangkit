@@ -41,6 +41,7 @@ class Language:
         observations: Optional[np.ndarray] = None,
         prev_horizon: int = 8,
         seed: int = 42,
+        has_threshold: float = 0.8,
     ):
         if not isinstance(messages, np.ndarray):
             raise ValueError("Language only accepts numpy arrays!")
@@ -72,6 +73,7 @@ class Language:
         self.prev_horizon = prev_horizon
 
         # HAS placeholders
+        self.has_threshold = has_threshold
         self.__alpha = None
         self.__freq = None
         self.__branching_entropy = None
@@ -99,6 +101,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError(
@@ -125,6 +132,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError(
@@ -150,6 +162,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError(
@@ -175,6 +192,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         # This may have been calculated previously
         if self.__langauge_entropy_value is None:
@@ -195,6 +217,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError(
@@ -221,6 +248,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError("Observations are needed to calculate mutual information!")
@@ -253,6 +285,11 @@ class Language:
         Raises
         ------
             ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
         """
         if self.observations is None:
             raise ValueError("Observations are needed to calculate M_previous^n.")
@@ -266,6 +303,18 @@ class Language:
 
     # Harris' Articulation Scheme metrics
     def branching_entropy(self):
+        """
+        Calculate the branching entropy for a given language.
+
+        Returns
+        -------
+            float: The calculated branching entropy value.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
         if self.__branching_entropy is None:
             if self.__freq is None:
                 self.__alpha, self.__freq = metrics.has_init(self.messages)
@@ -276,6 +325,19 @@ class Language:
         return self.__branching_entropy
 
     def conditional_entropy(self):
+        """
+        Calculate the conditional entropy for a given language.
+
+        Returns
+        -------
+        float
+            The calculated conditional entropy value.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
         # No need to even check for __freq as branching entropy already requires that
         if self.__conditional_entropy is None:
             if self.__branching_entropy is None:
@@ -287,11 +349,41 @@ class Language:
         return self.__conditional_entropy
 
     def boundaries(self, return_count: bool = False, return_mean: bool = False):
+        """
+        Calculate the HAS boundaries for a given language.
+
+        Parameters
+        ----------
+        return_count : bool, optional
+            If True, the method will return the boundaries and the count of each boundary.
+            Default is False.
+
+        return_mean : bool, optional
+            If True, the method will return the boundaries, the count of each boundary,
+            and the mean count. Default is False.
+
+        Returns
+        -------
+        boundaries : list of lists
+            A list of boundary lists for each message in the language.
+
+        Optional Returns:
+            If `return_count` is True, the method will also return `nb`, which is a list
+            containing the count of each boundary.
+
+            If `return_mean` is True, the method will also return `nb` and `mean`. `nb` is
+            a list containing the count of each boundary, and `mean` is the mean count.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
         if self.__boundaries is None:
             if self.__branching_entropy is None:
                 self.branching_entropy()
             self.__boundaries = metrics.compute_boundaries(
-                self.messages, self.__branching_entropy, threshold=0.8
+                self.messages, self.__branching_entropy, threshold=self.has_threshold
             )
 
         if return_count:
@@ -311,6 +403,39 @@ class Language:
         return_mean: bool = False,
         recompute: bool = False,
     ):
+        """
+        Calculate the random HAS boundaries for a given language.
+
+        Parameters
+        ----------
+        return_count : bool, optional
+            If True, returns the random boundaries along with the number of boundary items for each boundary.
+            Default is False.
+        return_mean : bool, optional
+            If True, returns the random boundaries along with the number of boundary items for each boundary,
+            as well as the mean number of boundary items across all boundaries.
+            Default is False.
+        recompute : bool, optional
+            If True, forces the recomputation of the random boundaries.
+            Default is False.
+
+        Returns
+        -------
+        boundaries : list of lists
+            A list of random boundary lists for each message in the language.
+
+        Optional Returns:
+            If `return_count` is True, the method will also return `nb`, which is a list
+            containing the count of each boundary.
+
+            If `return_mean` is True, the method will also return `nb` and `mean`. `nb` is
+            a list containing the count of each boundary, and `mean` is the mean count.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
         if self.__random_boundaries is None and not recompute:
             if self.__boundaries is None:
                 self.boundaries()
@@ -330,6 +455,34 @@ class Language:
         return self.__random_boundaries
 
     def segments(self, return_ids: bool = False, return_hashed_segments: bool = False):
+        """
+        Calculate the HAS segments for a given language.
+
+        Parameters
+        ----------
+        return_ids : bool, optional
+            If True, returns the segments along with their corresponding segment ids.
+            Default is False.
+
+        return_hashed_segments : bool, optional
+            If True, returns the segments along with their hashed versions.
+            Default is False.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of segments.
+
+        Optional Returns:
+            If `return_ids` is True, the method will also return segment_ids.
+            If `return_hashed_segments` is True, the method will also return the hashed segments.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+
+        """
         if self.__segments is None:
             if self.__boundaries is None:
                 self.boundaries()
@@ -356,6 +509,32 @@ class Language:
         return_hashed_segments: bool = False,
         recompute: bool = False,
     ):
+        """
+        Calculate the random HAS segments for a given language.
+
+        Parameters
+        ----------
+        return_ids : bool, optional
+            Specifies whether to return segment IDs along with the segments. Default is False.
+        return_hashed_segments : bool, optional
+            Specifies whether to return hashed segments along with the segments. Default is False.
+        recompute : bool, optional
+            Specifies whether to recompute the random segments. Default is False.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of segments.
+
+        Optional Returns:
+            If `return_ids` is True, the method will also return segment_ids.
+            If `return_hashed_segments` is True, the method will also return the hashed segments.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
         if self.__random_segments is None and not recompute:
             if self.__random_boundaries is None and not recompute:
                 self.random_boundaries()
@@ -381,6 +560,30 @@ class Language:
         return self.__random_segments
 
     def has_stats(self, compute_topsim: bool = False) -> dict:
+        """
+        Calculate the HAS statistics for a given language.
+
+        Parameters
+        ----------
+        compute_topsim : bool, optional
+            Flag indicating whether to compute topographic similarity. Default is False.
+
+        Returns
+        -------
+        dict
+            A dictionary containing various statistics related to the language.
+
+        Raises
+        ------
+        ValueError
+            If observations are None and compute_topsim is True.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+
+        """
         if self.__has_stats is None:
             if self.observations is None and compute_topsim:
                 raise ValueError(
