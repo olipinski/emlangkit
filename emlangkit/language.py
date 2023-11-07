@@ -4,6 +4,7 @@ from typing import Optional
 import numpy as np
 
 import emlangkit.metrics as metrics
+import emlangkit.utils as utils
 
 
 class Language:
@@ -69,6 +70,21 @@ class Language:
         # M_previous^n placeholders
         self.__mpn_value = None
         self.prev_horizon = prev_horizon
+
+        # HAS placeholders
+        self.__alpha = None
+        self.__freq = None
+        self.__branching_entropy = None
+        self.__conditional_entropy = None
+        self.__boundaries = None
+        self.__segments = None
+        self.__segment_ids = None
+        self.__hashed_segments = None
+        self.__random_boundaries = None
+        self.__random_segments = None
+        self.__random_segment_ids = None
+        self.__random_hashed_segments = None
+        self.__has_stats = None
 
     def topsim(self) -> tuple[float, float]:
         """
@@ -209,12 +225,11 @@ class Language:
         if self.observations is None:
             raise ValueError("Observations are needed to calculate mutual information!")
 
-        if self.__observation_entropy_value is None:
-            self.observation_entropy()
-        if self.__langauge_entropy_value is None:
-            self.language_entropy()
-
         if self.__mutual_information_value is None:
+            if self.__observation_entropy_value is None:
+                self.observation_entropy()
+            if self.__langauge_entropy_value is None:
+                self.language_entropy()
             self.__mutual_information_value = metrics.compute_mutual_information(
                 self.messages,
                 self.observations,
@@ -248,3 +263,145 @@ class Language:
             )
 
         return self.__mpn_value
+
+    # Harris' Articulation Scheme metrics
+    def branching_entropy(self):
+        if self.__branching_entropy is None:
+            if self.__freq is None:
+                self.__alpha, self.__freq = metrics.has_init(self.messages)
+            self.__branching_entropy = metrics.compute_branching_entropy(
+                self.__alpha, self.__freq
+            )
+
+        return self.__branching_entropy
+
+    def conditional_entropy(self):
+        # No need to even check for __freq as branching entropy already requires that
+        if self.__conditional_entropy is None:
+            if self.__branching_entropy is None:
+                self.branching_entropy()
+            self.__conditional_entropy = metrics.compute_conditional_entropy(
+                self.__branching_entropy, self.__freq
+            )
+
+        return self.__conditional_entropy
+
+    def boundaries(self, return_count: bool = False, return_mean: bool = False):
+        if self.__boundaries is None:
+            if self.__branching_entropy is None:
+                self.branching_entropy()
+            self.__boundaries = metrics.compute_boundaries(
+                self.messages, self.__branching_entropy, threshold=0.8
+            )
+
+        if return_count:
+            nb = [len(b) for b in self.__boundaries]
+            return self.__boundaries, nb
+
+        if return_mean:
+            nb = [len(b) for b in self.__boundaries]
+            mean = np.mean(nb)
+            return self.__boundaries, nb, mean
+
+        return self.__boundaries
+
+    def random_boundaries(self, return_count: bool = False, return_mean: bool = False, recompute: bool = False):
+        if self.__random_boundaries is None and not recompute:
+            if self.__boundaries is None:
+                self.boundaries()
+            self.__random_boundaries = metrics.compute_random_boundaries(
+                self.messages, self.__boundaries, self.__rng
+            )
+
+        if return_count:
+            nb = [len(b) for b in self.__random_boundaries]
+            return self.__random_boundaries, nb
+
+        if return_mean:
+            nb = [len(b) for b in self.__random_boundaries]
+            mean = np.mean(nb)
+            return self.__random_boundaries, nb, mean
+
+        return self.__random_boundaries
+
+    def segments(self, return_ids: bool = False, return_hashed_segments: bool = False):
+        if self.__segments is None:
+            if self.__boundaries is None:
+                self.boundaries()
+            (
+                self.__segments,
+                self.__segment_ids,
+                self.__hashed_segments,
+            ) = metrics.compute_segments(self.messages, self.__boundaries)
+
+        if return_ids:
+            return self.__segments, self.__segment_ids
+
+        if return_hashed_segments:
+            return self.__segments, self.__hashed_segments
+
+        if return_ids and return_hashed_segments:
+            return self.__segments, self.__segment_ids, self.__hashed_segments
+
+        return self.__segments
+
+    def random_segments(self, return_ids: bool = False, return_hashed_segments: bool = False, recompute: bool = False):
+        if self.__random_segments is None and not recompute:
+            if self.__random_boundaries is None and not recompute:
+                self.random_boundaries()
+            (
+                self.__random_segments,
+                self.__random_segment_ids,
+                self.__random_hashed_segments,
+            ) = metrics.compute_segments(self.messages, self.__random_boundaries)
+
+        if return_ids:
+            return self.__random_segments, self.__random_segment_ids
+
+        if return_hashed_segments:
+            return self.__random_segments, self.__random_hashed_segments
+
+        if return_ids and return_hashed_segments:
+            return self.__random_segments, self.__random_segment_ids, self.__random_hashed_segments
+
+        return self.__random_segments
+
+    def has_stats(self, compute_topsim: bool = False) -> dict:
+        if self.__has_stats is None:
+            if self.observations is None and compute_topsim:
+                raise ValueError(
+                    "Observations are needed to calculate topographic similarity."
+                )
+
+            zla, freq = metrics.zla(self.__segments)
+            random_zla, random_freq = metrics.zla(self.__random_segments)
+
+            # Pad the segments for topsim computation
+            # We use 0 as it is not used in the has table
+            # and has no effect on the distance measurement
+            if compute_topsim:
+                padded_hashed_segments = utils.pad_jagged(self.__hashed_segments)
+                padded_random_hashed_segments = utils.pad_jagged(self.__random_hashed_segments)
+
+            self.__has_stats = {
+                "vocab_size": len(self.__segment_ids),
+                "zla": zla,
+                "zipf": freq,
+                # We use hamming here, as the segments could contain multiple characters
+                # So editdistance would give us a worse estimate
+                "topographic_similarity": metrics.compute_topographic_similarity(
+                    padded_hashed_segments, self.observations, message_dist_metric="hamming"
+                )
+                if compute_topsim
+                else None,
+                "random_vocab_size": len(self.__random_segment_ids),
+                "random_zla": random_zla,
+                "random_zipf": random_freq,
+                "random_topographic_similarity": metrics.compute_topographic_similarity(
+                    padded_random_hashed_segments, self.observations, message_dist_metric="hamming"
+                )
+                if compute_topsim
+                else None,
+            }
+
+        return self.__has_stats
