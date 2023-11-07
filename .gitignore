@@ -9,6 +9,7 @@ __pycache__/
 /build
 /wheels
 /wheelhouse
+emlangkit.egg-info
 
 # PyCharm
 .idea/

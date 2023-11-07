@@ -725,3 +725,69 @@ def test_mpn():
         100,
         2,
     )
+
+    with_stats = metrics.compute_mpn(
+        messages=np.array(
+            [
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [4, 1],
+                [2, 1],
+                [4, 1],
+                [3, 1],
+                [1, 1],
+            ]
+        ),
+        observations=np.array(
+            [
+                [1],
+                [2],
+                [3],
+                [4],
+                [1],
+                [4],
+                [3],
+                [1],
+                [1],
+            ]
+        ),
+        prev_horizon=8,
+        return_stats=True,
+    )
+
+    assert len(with_stats) == 2
+
+
+def test_has():
+    """Tests to see if HAS metrics are calculated correctly."""
+    rng = np.random.default_rng(seed=42)
+
+    messages = np.array(
+        [
+            [0, 1, 1],
+            [0, 1, 2],
+            [0, 1, 3],
+            [0, 1, 1],
+            [4, 1, 1],
+            [2, 1, 3],
+            [4, 1, 2],
+            [3, 1, 4],
+            [1, 1, 5],
+        ]
+    )
+
+    alpha, freq = metrics.has_init(messages)
+
+    be = metrics.compute_branching_entropy(alpha, freq)
+
+    metrics.compute_conditional_entropy(be, freq)
+
+    boundaries = metrics.compute_boundaries(messages, be, 0.5)
+
+    metrics.compute_segments(messages, boundaries)
+
+    random_boundaries = metrics.compute_random_boundaries(messages, boundaries, rng)
+
+    metrics.compute_segments(messages, random_boundaries)

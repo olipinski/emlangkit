@@ -10,17 +10,26 @@ from emlangkit import Language
 
 
 def test_instantiations():
+    # Check error for not numpy array
     with pytest.raises(ValueError, match=r".* numpy .*"):
+        # noinspection PyTypeChecker
         Language(messages=[])
 
+    # Check error for empty messages
     with pytest.raises(ValueError, match=r".* messages .*"):
         Language(messages=np.array([]))
 
+    # Check error for not numpy array
+    with pytest.raises(ValueError, match=r".* numpy .*"):
+        # noinspection PyTypeChecker
+        Language(messages=np.array([1, 1, 1]), observations=[])
+
+    # Check error for empty observations, when provided
     with pytest.raises(ValueError, match=r".* observations .*"):
         Language(messages=np.array([1, 1, 1]), observations=np.array([]))
 
 
-def test_metrics():
+def test_language_metrics():
     test_msgs = np.array(
         [
             [0, 0, 0],
@@ -68,3 +77,19 @@ def test_metrics():
     lang.bosdis()
     lang.observation_entropy()
     lang.language_entropy()
+
+    # MPN
+    lang.mpn()
+
+    # HAS
+    lang.branching_entropy()
+    lang.conditional_entropy()
+    lang.boundaries(return_count=True, return_mean=True)
+    lang.random_boundaries(return_count=True, return_mean=True)
+    lang.segments(return_ids=True, return_hashed_segments=True)
+    lang.random_segments(return_ids=True, return_hashed_segments=True)
+    lang.has_stats(compute_topsim=True)
+
+    # Test recomputing random stats
+    lang.random_boundaries(recompute=True)
+    lang.random_segments(recompute=True)
