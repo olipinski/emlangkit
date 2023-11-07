@@ -50,6 +50,7 @@ Currently available metrics, with their implementations as per below.
 - Positional Disentanglement \[2,4\] (`emlangkit.metrics.posdis`)
 - Bag-of-Words Disentanglement \[2,4\] (`emlangkit.metrics.bosdis`)
 - M_previous^n \[5\] (`emlangkit.metrics.mpn`)
+- Harris' Articulation Scheme \[6\] (`emlangkit.metrics.has`)
 
 ## Contributing
 
