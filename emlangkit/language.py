@@ -590,8 +590,8 @@ class Language:
                     "Observations are needed to calculate topographic similarity."
                 )
 
-            zla, freq = metrics.zla(self.__segments)
-            random_zla, random_freq = metrics.zla(self.__random_segments)
+            zla, freq = metrics.zla(self.segments())
+            random_zla, random_freq = metrics.zla(self.random_segments())
 
             # Pad the segments for topsim computation
             # We use 0 as it is not used in the has table
