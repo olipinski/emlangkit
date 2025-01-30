@@ -89,7 +89,7 @@ def test_topsim():
             ),
             observations=np.array([[4, 4], [4, 3], [3, 2], [1, 4]]),
         )[0],
-        np.NAN,
+        np.nan,
         2,
     )
 
