@@ -24,7 +24,7 @@ def compute_mpn(
     Parameters
     ----------
     messages : np.ndarray
-        The messages temporally ordered messages.
+        The temporally ordered messages.
     observations : np.ndarray
         The temporally ordered observations.
     prev_horizon : int
