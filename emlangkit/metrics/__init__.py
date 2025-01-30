@@ -11,6 +11,7 @@ from emlangkit.metrics.has import (
 )
 from emlangkit.metrics.mpn import compute_mpn
 from emlangkit.metrics.mutual_information import compute_mutual_information
+from emlangkit.metrics.nc_npmi import compute_nc_npmi
 from emlangkit.metrics.posdis import compute_posdis
 from emlangkit.metrics.topsim import compute_topographic_similarity
 from emlangkit.metrics.zla import zla
@@ -30,4 +31,5 @@ __all__ = [
     "compute_branching_entropy",
     "compute_conditional_entropy",
     "zla",
+    "compute_nc_npmi",
 ]
