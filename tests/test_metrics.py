@@ -89,7 +89,7 @@ def test_topsim():
             ),
             observations=np.array([[4, 4], [4, 3], [3, 2], [1, 4]]),
         )[0],
-        np.NAN,
+        np.nan,
         2,
     )
 
@@ -758,6 +758,85 @@ def test_mpn():
     )
 
     assert len(with_stats) == 2
+
+
+def test_nc_npmi():
+    """Tests to see if the non-compositional NPMI is calculated correctly."""
+    test_obs = np.array(
+        [[0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 1], [0, 1], [0, 2], [0, 3], [0, 4]]
+    )
+
+    npmi_dict1 = metrics.compute_nc_npmi(
+        messages=np.array(
+            [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [0, 3],
+            ]
+        ),
+        observations=test_obs,
+    )
+
+    npmi_dict2 = metrics.compute_nc_npmi(
+        messages=np.array(
+            [
+                [0, 0],
+                [0, 5],
+                [0, 5],
+                [0, 0],
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [0, 2],
+                [0, 3],
+                [0, 3],
+            ]
+        ),
+        observations=test_obs,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict1["[0 0]"]["[0 0]"],
+        1,
+        2,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict1["[0 1]"]["[0 1]"],
+        1,
+        2,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict1["[0 2]"]["[0 2]"],
+        1,
+        2,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict1["[0 0]"]["[0 1]"],
+        np.nan,
+        2,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict2["[0 5]"]["[0 0]"],
+        0.569,
+        2,
+    )
+
+    np.testing.assert_almost_equal(
+        npmi_dict2["[0 0]"]["[0 0]"],
+        0.569,
+        2,
+    )
 
 
 def test_has():

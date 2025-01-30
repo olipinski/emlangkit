@@ -70,7 +70,6 @@ def test_language_metrics():
     lang_no_obs.language_entropy()
 
     # Test language with observations provided
-
     lang.topsim()
     lang.mutual_information()
     lang.posdis()
@@ -80,6 +79,9 @@ def test_language_metrics():
 
     # MPN
     lang.mpn()
+
+    # NPMI
+    lang.nc_npmi()
 
     # HAS
     lang.branching_entropy()

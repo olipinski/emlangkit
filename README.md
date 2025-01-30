@@ -11,7 +11,7 @@ inputs should be standardised, to ease adoption and spread of these metrics.
 
 To install emlangkit, run `pip install emlangkit`.
 
-Automatic tests are run for Python 3.9, 3.10, 3.11.
+Automatic tests are run for Python 3.9, 3.10, 3.11, 3.12.
 
 ## Usage
 
@@ -51,6 +51,8 @@ Currently available metrics, with their implementations as per below.
 - Bag-of-Words Disentanglement \[2,4\] (`emlangkit.metrics.bosdis`)
 - M_previous^n \[5\] (`emlangkit.metrics.mpn`)
 - Harris' Articulation Scheme \[6\] (`emlangkit.metrics.has`)
+- Non-Compositional Normalised Pointwise Mutual Information (NPMI) \[7\]
+  (`emlangkit.metrics.nc_npmi`)
 
 ## Contributing
 
@@ -105,3 +107,6 @@ Citations for the metrics and parts of this software:
   References in Emergent Communication’. arXiv.2310.06555
 - \[6\] R. Ueda, T. Ishii, and Y. Miyao, ‘On the Word Boundaries of Emergent
   Languages Based on Harris’s Articulation Scheme’, ICLR 2023
+- \[7\] O. Lipinski, A. J. Sobey, F. Cerutti, and T. J. Norman, ‘Speaking Your
+  Language: Spatial Relationships in Interpretable Emergent Communication’,
+  NeurIPS 2024

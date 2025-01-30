@@ -72,6 +72,9 @@ class Language:
         self.__mpn_value = None
         self.prev_horizon = prev_horizon
 
+        # NPMI placeholders
+        self.__nc_npmi_dict = None
+
         # HAS placeholders
         self.has_threshold = has_threshold
         self.__alpha = None
@@ -300,6 +303,35 @@ class Language:
             )
 
         return self.__mpn_value
+
+    def nc_npmi(self) -> dict:
+        """
+        Calculate the non-compositional NPMI correlations for the language.
+
+        This method requires observations to be set in the class.
+
+        Returns
+        -------
+            dict: Dictionary of non-compositional messages, observations, and their respective NPMI values.
+
+        Raises
+        ------
+            ValueError: If observations are not set.
+
+        Notes
+        -----
+            The result is cached and will only be computed once.
+            Subsequent calls to this method will return the cached value.
+        """
+        if self.observations is None:
+            raise ValueError("Observations are needed to calculate M_previous^n.")
+
+        if self.__nc_npmi_dict is None:
+            self.__nc_npmi_dict = metrics.compute_nc_npmi(
+                self.messages, self.observations
+            )
+
+        return self.__nc_npmi_dict
 
     # Harris' Articulation Scheme metrics
     def branching_entropy(self):
