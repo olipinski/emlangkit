@@ -1,6 +1,6 @@
 [project]
 name = "emlangkit"
-version = "0.2.0"
+version = "0.3.0"
 description = " Emergent Language Analysis Toolkit"
 authors = [
   { name = "Olaf Lipinski", email = "o.lipinski@soton.ac.uk" },
@@ -13,6 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Development Status :: 3 - Alpha",
@@ -29,3 +30,8 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/olipinski/emlangkit"
 "Bug Tracker" = "https://github.com/olipinski/emlangkit/issues"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
