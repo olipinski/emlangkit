@@ -1,6 +1,7 @@
+exclude: 'l2cfd/snnm/.*|l2cfd/data/.*'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-symlinks
       - id: destroyed-symlinks
@@ -16,17 +17,17 @@ repos:
       - id: detect-private-key
       - id: debug-statements
   - repo: https://github.com/psf/black
-    rev: 23.10.1
+    rev: 25.1.0
     hooks:
       - id: black-jupyter
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.4.1
     hooks:
       - id: codespell
         args:
           - '--skip=*.ipynb'
   - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.1.2
     hooks:
       - id: flake8
         args:
@@ -37,10 +38,10 @@ repos:
           - --show-source
           - --statistics
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 6.0.1
     hooks:
       - id: isort
-        args: [ "--profile", "black" ]
+        args: [ "--profile", "black", "--sort-reexports"]
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.3.0
     hooks:
@@ -51,7 +52,7 @@ repos:
           - --convention=numpy
         additional_dependencies: ["tomli"]
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.22
     hooks:
       - id: mdformat
         additional_dependencies:
@@ -60,6 +61,6 @@ repos:
         args:
           - --wrap=80
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.19.1
     hooks:
       - id: pyupgrade
